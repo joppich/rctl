@@ -9,10 +9,15 @@ fn main() {
 
     let uid = unsafe { libc::getuid() };
 
-    let subject = rctl::Subject::user_id(uid);
+    let rule = rctl::Rule {
+        subject: rctl::Subject::user_id(uid),
+        resource: rctl::Resource::OpenFiles,
+        limit: rctl::Limit::amount(1000),
+        action: rctl::Action::Deny
+    };
 
-    let serialized = serde_json::to_string(&subject)
-        .expect("Could not serialize RCTL subject.");
+    let serialized = serde_json::to_string(&rule)
+        .expect("Could not serialize RCTL rule.");
 
     println!("{}", serialized);
 }
